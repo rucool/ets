@@ -190,7 +190,7 @@ def main(args):
                                   '.colorBar=Rainbow2%7C%7C%7C%7C%7C&amp;.bgColor=0xffccccff&amp;.yRange=%7C%7Cfalse'
 
     dataset_config = {'dataset_id': dataset_id,
-                      'active': True,
+                      'active': str(True).lower(),
                       'file_dir': nc_path,
                       'title': dataset_title,
                       'default_graph_query': default_graph_query}
