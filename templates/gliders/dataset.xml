@@ -1,0 +1,70 @@
+{# ERDDAP <dataset /> template for glider deployments
+args:
+dataset
+cdm_data_type
+n_minutes
+m_millis
+variables
+keywords
+#}
+    <dataset type="EDDTableFromNcCFFiles" datasetID="{{ dataset.dataset_id }}" active="{{ dataset.active }}">
+        <defaultGraphQuery>{{ dataset.default_graph_query }}</defaultGraphQuery>
+        {% if n_minutes -%}
+        <reloadEveryNMinutes>{{ n_minutes }}</reloadEveryNMinutes>
+        {% else -%}
+        <reloadEveryNMinutes>86400</reloadEveryNMinutes>
+        {% endif -%}
+        {% if n_millis -%}
+        <updateEveryNMillis>{{ n_millis }}</updateEveryNMillis>
+        {% else -%}
+        <updateEveryNMillis>-1</updateEveryNMillis>
+        {% endif -%}
+        <fileDir>{{ dataset.file_dir }}</fileDir>
+        <fileNameRegex>.*\.nc</fileNameRegex>
+        <recursive>false</recursive>
+        <pathRegex>.*</pathRegex>
+        <metadataFrom>last</metadataFrom>
+        <preExtractRegex/>
+        <postExtractRegex/>
+        <extractRegex/>
+        <columnNameForExtract/>
+        <sortFilesBySourceNames/>
+        <fileTableInMemory>false</fileTableInMemory>
+        <accessibleViaFiles>true</accessibleViaFiles>
+        <addAttributes>
+            <att name="cdm_trajectory_variables">trajectory</att>
+            {% if cdm_data_type == 'TrajectoryProfile' -%}
+            <att name="cdm_data_type">TrajectoryProfile</att>
+            <att name="cdm_profile_variables">profile_id</att>
+            <att name="subsetVariables">source_file, profile_id, profile_lat, profile_lon, profile_time</att>
+            {% else -%}
+            <att name="cdm_data_type">Trajectory</att>
+            <att name="subsetVariables">source_file</att>
+            {% endif -%}
+            <att name="title">{{ dataset.title }}</att>
+            {% if keywords -%}
+                <att name="keywords">{{ keywords }}</att>
+            {% else -%}
+                <att name="keywords"></att>
+            {% endif -%}
+            <att name="sourceUrl">(local files)</att>
+        </addAttributes>
+        {%- for variable in variables %}
+        <dataVariable>
+            <sourceName>{{variable.name}}</sourceName>
+            <dataType>{{variable.dtype}}</dataType>
+            <addAttributes>
+                <att name="_ChunkSizes">null</att>
+                <att name="coordinates">null</att>
+                {% for name,value in variable.attrs.items() -%}
+                <att name="{{ name }}">{{ value }}</att>
+                {% endfor -%}
+                {%- if variable.name == 'profile_id' -%}
+                    <att name="cf_role">profile_id</att>
+                {% elif variable.name == 'trajectory' -%}
+                    <att name="cf_role">trajectory_id</att>
+                {%- endif -%}
+            </addAttributes>
+        </dataVariable>
+        {%- endfor %}
+    </dataset>
