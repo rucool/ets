@@ -2,7 +2,7 @@
 
 . ~/.bashrc;
 
-PATH=${PATH}:/bin:${HOME}/code:${HOME}/code/db/slocum_gpt:${HOME}/code/ets/scripts;
+PATH=${PATH}:/bin:${HOME}/code:${HOME}/code/db/slocum_gpt:${HOME}/code/proc/erddap/ets/scripts;
 
 app=$(basename $0);
 
